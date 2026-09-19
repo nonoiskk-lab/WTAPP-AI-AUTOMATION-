@@ -60,11 +60,14 @@ and the webhook wired up on Meta's side.
 4. Deploy. Note the resulting URL, e.g. `https://krtech-agent.vercel.app`.
 5. Go back and set `NEXT_PUBLIC_APP_URL` to that exact URL, then redeploy
    (Vercel → Deployments → ⋯ → Redeploy) so it takes effect.
-6. **Note on cron:** `vercel.json` schedules `/api/cron/followups` every 15
-   minutes via Vercel Cron, which requires a paid Vercel plan. On the free
-   plan, that file is simply ignored — follow-ups won't auto-send until you
-   either upgrade or trigger that same endpoint from an external scheduler
-   (e.g. an n8n/Make scenario hitting it every 15 min with header
+6. **Note on cron:** `vercel.json` schedules `/api/cron/followups` once daily via
+   Vercel Cron. The Hobby plan **rejects the whole deployment** (not just the
+   cron job) if the schedule is more frequent than daily — this actually broke
+   the first deploy attempt with "Hobby accounts are limited to daily cron
+   jobs," so don't change this back to a sub-daily schedule unless the account
+   is on a paid plan. For more frequent follow-up processing on Hobby, trigger
+   the same endpoint from an external scheduler instead (e.g. an n8n/Make
+   scenario hitting it every 15 min with header
    `Authorization: Bearer <CRON_SECRET>`). This does not block WhatsApp
    messaging/replies — only the automated follow-up nudges.
 

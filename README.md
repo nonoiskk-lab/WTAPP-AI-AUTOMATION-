@@ -109,10 +109,12 @@ vercel deploy
 ```
 
 Set every variable from `.env.example` in Vercel → Project → Settings → Environment
-Variables. `vercel.json` already schedules `/api/cron/followups` every 15 minutes via
-Vercel Cron (requires a paid Vercel plan for cron; on the free plan, trigger the same
-endpoint from n8n/Make on a schedule instead — see comments in
-`src/app/api/cron/followups/route.ts`).
+Variables. `vercel.json` schedules `/api/cron/followups` once a day via Vercel Cron —
+the Hobby plan only allows daily (not sub-daily) cron schedules, and a more frequent
+schedule will make the deployment fail outright with a "Hobby accounts are limited to
+daily cron jobs" error. For more frequent follow-up processing on Hobby, trigger the
+same endpoint from n8n/Make on a schedule instead — see comments in
+`src/app/api/cron/followups/route.ts`.
 
 For a fully worked-through Supabase + Vercel + Meta webhook checklist (exact env vars,
 exact order of operations, and an end-to-end test plan), see
