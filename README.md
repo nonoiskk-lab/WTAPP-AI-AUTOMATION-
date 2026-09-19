@@ -114,6 +114,10 @@ Vercel Cron (requires a paid Vercel plan for cron; on the free plan, trigger the
 endpoint from n8n/Make on a schedule instead — see comments in
 `src/app/api/cron/followups/route.ts`).
 
+For a fully worked-through Supabase + Vercel + Meta webhook checklist (exact env vars,
+exact order of operations, and an end-to-end test plan), see
+[`docs/deploy-and-test-checklist.md`](docs/deploy-and-test-checklist.md).
+
 ## Anti-hallucination model
 
 The AI never invents prices, features, timelines, or case studies (spec requirement).

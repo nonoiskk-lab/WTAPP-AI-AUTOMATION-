@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { env } from "@/lib/env";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { verifyWebhookSignature, sendTextMessage, markMessageRead } from "@/lib/whatsapp/client";
@@ -37,9 +37,12 @@ export async function GET(req: NextRequest) {
  * validate -> identify customer -> store message -> dedup -> detect intent
  * -> retrieve knowledge -> generate AI response -> send -> update CRM -> log.
  *
- * Always returns 200 quickly (WhatsApp retries aggressively on non-2xx),
- * even when an individual message fails — errors are logged, not thrown,
- * once we're past payload validation.
+ * Returns 200 immediately after signature + payload validation — Meta
+ * expects a fast ack and retries aggressively on slow/non-2xx responses.
+ * The actual AI/DB/send work (which can take several seconds) runs via
+ * `after()` so it continues on Vercel's infra after the response is sent,
+ * without blocking Meta's webhook delivery. Per-message errors are caught
+ * and logged there, never thrown back into the response path.
  */
 export async function POST(req: NextRequest) {
   const rawBody = await req.text();
@@ -58,13 +61,15 @@ export async function POST(req: NextRequest) {
 
   const messages = payload.entry?.flatMap((e) => e.changes.flatMap((c) => c.value.messages ?? [])) ?? [];
 
-  for (const message of messages) {
-    try {
-      await processInboundMessage(message);
-    } catch (err) {
-      console.error("[webhook] failed to process message", message.id, err);
+  after(async () => {
+    for (const message of messages) {
+      try {
+        await processInboundMessage(message);
+      } catch (err) {
+        console.error("[webhook] failed to process message", message.id, err);
+      }
     }
-  }
+  });
 
   return NextResponse.json({ received: true });
 }

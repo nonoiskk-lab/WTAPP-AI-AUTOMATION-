@@ -6,7 +6,11 @@ import type {
   OutboundTextMessage,
 } from "./types";
 
-const GRAPH_VERSION = "v20.0";
+const GRAPH_VERSION = "v25.0";
+
+interface GraphErrorBody {
+  error?: { message?: string; type?: string; code?: number; error_subcode?: number };
+}
 
 function graphUrl(path: string) {
   return `https://graph.facebook.com/${GRAPH_VERSION}/${path}`;
@@ -25,6 +29,26 @@ async function postToGraph(body: Record<string, unknown>) {
 
   if (!res.ok) {
     const detail = await res.text();
+
+    // Error code 190 = OAuthException — the access token is expired or
+    // invalid. Log this distinctly so it's immediately obvious in Vercel
+    // logs why sends started failing (the temporary token expires in 24h;
+    // see README for generating a permanent System User token).
+    let parsed: GraphErrorBody | null = null;
+    try {
+      parsed = JSON.parse(detail);
+    } catch {
+      // Non-JSON error body — fall through to the generic error below.
+    }
+
+    if (parsed?.error?.code === 190) {
+      console.error(
+        `[whatsapp] Access token expired or invalid (error 190, subcode ${parsed.error.error_subcode ?? "n/a"}). ` +
+          "WHATSAPP_ACCESS_TOKEN needs to be refreshed — the temporary token from Meta's API Setup page " +
+          "expires after 24h. Generate a permanent System User token instead (see README)."
+      );
+    }
+
     throw new Error(`WhatsApp API error (${res.status}): ${detail}`);
   }
 
