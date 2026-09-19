@@ -1,0 +1,37 @@
+{
+  "name": "krtech-whatsapp-ai-agent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "KRTECH.SPACE WhatsApp AI Sales + Support + CRM + Automation Agent",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "db:types": "supabase gen types typescript --project-id $SUPABASE_PROJECT_ID > src/lib/types/database.ts"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.45.4",
+    "next": "16.3.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.15",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.19",
+    "eslint": "^9.15.0",
+    "eslint-config-next": "16.3.5",
+    "@eslint/eslintrc": "^3.1.0",
+    "postcss": "^8.4.40",
+    "tailwindcss": "^3.4.7",
+    "typescript": "^5.5.4"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  }
+}
