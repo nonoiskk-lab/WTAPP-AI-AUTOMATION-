@@ -1,12 +1,24 @@
 # TASK FOR BROWSER AGENT: Set up WhatsApp Cloud API for KRTECH.SPACE
 
+## Handoff state (read this first)
+
+The human has ALREADY completed Meta for Developers account registration
+themselves — including accepting terms and any OTP/verification during
+signup. That step is done and is NOT yours to repeat or check.
+
+**Your job starts at Step 1 below (creating the App) and continues straight
+through without pausing, EXCEPT for the two explicit stop conditions listed
+in "When to stop and ask" below.** Do not ask the human to confirm
+in-between steps that don't require their input — just proceed.
+
 ## Your role and context
 
-You are operating a browser with a Facebook account already logged in, on the
-Meta for Developers platform (developers.facebook.com). Your job is to create
-a Meta App, attach the WhatsApp product to it, and extract 5 specific
-credentials that a developer needs to connect a WhatsApp AI bot to their
-Next.js + Supabase application.
+You are operating a browser with a Facebook account already logged in, on
+the Meta for Developers platform (developers.facebook.com), with a
+developer account already registered. Your job is to create a Meta App,
+attach the WhatsApp product to it, and extract 5 specific credentials that a
+developer needs to connect a WhatsApp AI bot to their Next.js + Supabase
+application.
 
 **You are performing REAL actions on a REAL account.** This will create an
 actual Meta App visible in this person's developer account. Do not use any
@@ -14,10 +26,23 @@ other Facebook account, do not touch existing apps unless told to, and do not
 guess or fabricate any credential — every value you report back MUST be
 copied verbatim from the Meta dashboard, never invented.
 
-**Never paste, log, or send any of these credentials to any third-party site,
-form, or chat other than reporting them back to the user in this session.**
+**Never paste, log, or send any of these credentials to any third-party
+site, form, or chat other than reporting them back to the human at the end.**
 Treat every token as a live secret capable of sending WhatsApp messages and
 spending the account's API quota.
+
+## When to stop and ask (only these two situations)
+
+1. **App Secret reveal asks for the account password.** Do not enter it
+   yourself — pause and ask the human to type it.
+2. **Test-number verification sends a WhatsApp OTP** to a phone. Pause and
+   ask the human to read you the code from that phone.
+
+Anything else — including intermediate confirmation screens, "are you sure"
+dialogs for actions you were already asked to do, or normal navigation —
+just proceed through it yourself. Do not stop to narrate every click; only
+report back at the final summary (Step 8) or at one of the two stop
+conditions above.
 
 ## What you're building toward
 
@@ -31,122 +56,88 @@ WHATSAPP_VERIFY_TOKEN=
 WHATSAPP_APP_SECRET=
 ```
 
-Your job is to fill in the first, second, third, and fifth of these from the
-Meta dashboard, and to generate the fourth yourself. At the end, present all
-5 values clearly labeled so the user can paste them into their `.env` file.
+Fill in the 1st, 2nd, 3rd, and 5th from the Meta dashboard; generate the 4th
+yourself. At the end, present all 5 values clearly labeled.
 
-## Step-by-step
+## Step 1 — Create a new App
 
-### Step 1 — Go to Meta for Developers
-Navigate to `https://developers.facebook.com/apps/`. Confirm you see a
-dashboard of the logged-in user's apps (or an empty state if they have none).
-Take a screenshot / describe what you see before proceeding, so the user can
-confirm you're on the right account.
+1. Go to `https://developers.facebook.com/apps/`. You should now see the
+   apps dashboard (not the public landing page) since the account is
+   already registered — if you still see a public landing/"Get Started"
+   page, STOP and tell the human the account doesn't look registered yet.
+2. Click **"Create App"**.
+3. If asked "What do you want your app to do?" or for a use case, choose
+   **"Other"** if prompted, then app type **"Business"**. (If instead the
+   flow shows a use-case list first, select **"WhatsApp"** directly if
+   offered — Meta's onboarding varies; take whichever path leads to
+   WhatsApp being added.)
+4. App name: `KRTECH Business Agent`.
+5. Provide a contact email if asked (use the account's own email).
+6. If asked to attach a Business Portfolio: if one already exists, use it;
+   if none exists, choose to create one using the account's own name/email;
+   do not invent a fictitious legal business name — if the form demands a
+   legal business name or tax details you don't have, STOP and ask.
+7. Submit / Create App.
 
-### Step 2 — Create a new App
-1. Click **"Create App"**.
-2. When asked "What do you want your app to do?" or for a use case, choose
-   the option for **"Other"** if prompted, then app type **"Business"**.
-   (If the flow instead asks for a use case list first, look for and select
-   **"WhatsApp"** as the use case directly — Meta's onboarding flow changes
-   periodically; pick whichever path leads to WhatsApp being added.)
-3. App name: enter `KRTECH Business Agent` (or ask the user if they want a
-   different name before submitting).
-4. Provide a contact email if asked (use the account's own email).
-5. Attach it to a Business Portfolio if prompted — if the user has no
-   Business Portfolio yet, choose the option to create one, or select
-   "skip"/"none" if that's offered. If this step blocks you and requires
-   information you don't have (like a legal business name), STOP and ask
-   the user rather than inventing details.
-6. Submit / Create App.
+## Step 2 — Add the WhatsApp product
 
-### Step 3 — Add the WhatsApp product
-1. On the new app's dashboard, find the **"Add Products to Your App"**
-   section (or the left sidebar "Add Product").
-2. Find **WhatsApp** and click **"Set up"**.
-3. This lands you on the WhatsApp **"API Setup"** (aka "Getting Started")
-   page — this is the main page you'll extract credentials from.
+1. On the app dashboard, find **"Add Products to Your App"** (or the left
+   sidebar **"Add Product"**).
+2. Find **WhatsApp** → click **"Set up"**.
+3. This opens the WhatsApp **"API Setup"** page — your main source for
+   credentials.
 
-### Step 4 — Extract credential #1: Access Token
-On the API Setup page, there is a section showing a **Temporary access
-token** (a long string, often starting with `EAA...`).
-- Click to reveal/copy it.
-- Label this value **WHATSAPP_ACCESS_TOKEN** when reporting back.
-- **Important caveat to tell the user:** this temporary token expires in
-  24 hours. Mention explicitly in your final report that for anything beyond
-  quick testing, they need a **permanent token**, generated via:
-  Business Settings → System Users → create a system user → generate token
-  with `whatsapp_business_messaging` and `whatsapp_business_management`
-  permissions. Do NOT attempt this system-user flow yourself unless the user
-  explicitly asks you to — it involves business-level permissions and is
-  easy to misconfigure. Flag it as a follow-up step instead.
+## Step 3 — Credential #1: Access Token
 
-### Step 5 — Extract credential #2: Phone Number ID
-Same API Setup page has a **"From"** phone number dropdown/field — this is
-Meta's provided test number. Underneath or next to it there's a
-**Phone number ID** (a numeric string).
-- Copy it exactly.
-- Label this value **WHATSAPP_PHONE_NUMBER_ID**.
+On the API Setup page, find the **Temporary access token** field (a long
+string, often starting with `EAA...`). Copy it in full.
+→ Label: **WHATSAPP_ACCESS_TOKEN**
+(Note for your final report: this expires in 24h; a permanent token needs a
+System User set up separately — mention this, don't attempt it.)
 
-### Step 6 — Extract credential #3: WhatsApp Business Account ID
-On the same page (or under WhatsApp → **Configuration** in the left sidebar),
-find **WhatsApp Business Account ID** (also a numeric string, different from
-the phone number ID).
-- Copy it exactly.
-- Label this value **WHATSAPP_BUSINESS_ACCOUNT_ID**.
+## Step 4 — Credential #2: Phone Number ID
 
-### Step 7 — Extract credential #5: App Secret
-1. Go to the left sidebar → **App Settings → Basic**.
-2. Find the **"App Secret"** field. It's hidden by default — click
-   **"Show"**. Meta may require re-entering the Facebook account password to
-   reveal it. If a password prompt appears, STOP and ask the user to enter
-   it themselves rather than you handling their password.
-3. Copy the revealed value.
-4. Label this value **WHATSAPP_APP_SECRET**.
+Same page, near the **"From"** phone number dropdown, find **Phone number
+ID** (numeric string). Copy it.
+→ Label: **WHATSAPP_PHONE_NUMBER_ID**
 
-### Step 8 — Generate credential #4: Verify Token
-This one is NOT in the Meta dashboard — you generate it yourself.
-- Create a random alphanumeric string, e.g. `krtech_wh_` followed by 12
-  random alphanumeric characters (you can generate this yourself, it doesn't
-  need to be cryptographically special, just hard to guess).
-- Label this value **WHATSAPP_VERIFY_TOKEN**.
-- Remember this exact value — you'll need to paste the SAME string into the
-  Meta webhook configuration in a later step (Step 10), once the app is
-  deployed.
+## Step 5 — Credential #3: WhatsApp Business Account ID
 
-### Step 9 — Add a test recipient number
-WhatsApp Cloud API test mode only allows sending to pre-verified numbers.
-1. On the API Setup page, find **"To"** → **"Manage phone number list"**.
-2. Add the phone number(s) that should be able to test the bot (e.g. the
-   business owner's personal WhatsApp number), in international format
-   (e.g. +91XXXXXXXXXX).
-3. Meta will send an OTP/verification code to that WhatsApp number — the
-   user will need to read that code off their own phone and provide it to
-   you (or enter it themselves). Do not proceed without this human step.
+Same page or WhatsApp → **Configuration**, find **WhatsApp Business Account
+ID** (a different numeric string). Copy it.
+→ Label: **WHATSAPP_BUSINESS_ACCOUNT_ID**
 
-### Step 10 — Webhook configuration (DO THIS LAST, AFTER DEPLOYMENT)
-This step requires a **public HTTPS URL** for the app's webhook endpoint,
-which only exists after the developer deploys the Next.js app (e.g. to
-Vercel). **If the app isn't deployed yet, stop here and report the 5
-credentials collected so far — do not attempt this step with a placeholder
-URL.**
+## Step 6 — Credential #5: App Secret
 
-Once you have a real deployed URL (it will look like
-`https://<something>.vercel.app`):
-1. Go to WhatsApp → **Configuration** in the left sidebar.
-2. Under **Webhook**, click **Edit**.
-3. Callback URL: `https://<their-domain>/api/webhooks/whatsapp`
-4. Verify token: paste the EXACT same string you generated in Step 8.
-5. Click **Verify and Save**. If it fails, the most common causes are: the
-   app isn't actually deployed/reachable yet, or the verify token doesn't
-   match exactly what's set in the app's environment variable
-   `WHATSAPP_VERIFY_TOKEN` — check both.
-6. After saving, find the **"Webhook fields"** list and click **Subscribe**
-   next to **`messages`**. This is required — without it, no incoming
-   WhatsApp messages will ever reach the app.
+1. Left sidebar → **App Settings → Basic**.
+2. Find **"App Secret"** → click **"Show"**.
+3. **If this asks for the account password → STOP, this is stop condition
+   #1. Ask the human to enter it.**
+4. Copy the revealed value.
+→ Label: **WHATSAPP_APP_SECRET**
 
-### Step 11 — Final report
-Present a clean summary back to the user in this exact format:
+## Step 7 — Credential #4: Verify Token (you generate this)
+
+Generate a random string yourself, e.g. `krtech_wh_` + 12 random
+alphanumeric characters. No need to ask the human — just generate it and
+remember it for Step 9.
+→ Label: **WHATSAPP_VERIFY_TOKEN**
+
+## Step 8 — Add a test recipient number
+
+1. On the API Setup page: **"To"** → **"Manage phone number list"** → add
+   the number(s) that should be able to test the bot, international format
+   (e.g. +91XXXXXXXXXX). If you don't know which number to use, ask the
+   human for it before proceeding (this is a normal input request, not one
+   of the two stop conditions — just ask inline and continue once you have
+   the number).
+2. Meta sends a WhatsApp OTP to that number.
+   **This is stop condition #2 → ask the human to read you the code.**
+3. Enter the code to complete verification.
+
+## Step 9 — Final report
+
+Present this exact summary:
 
 ```
 WHATSAPP_ACCESS_TOKEN=<value>          (⚠ temporary, expires in 24h)
@@ -156,17 +147,19 @@ WHATSAPP_VERIFY_TOKEN=<value you generated>
 WHATSAPP_APP_SECRET=<value>
 ```
 
-Then explicitly state:
-- Whether Step 10 (webhook) was completed or skipped (and why, if skipped).
-- That the test number(s) added in Step 9 are the only numbers that can
-  currently message the bot.
-- The reminder that the access token is temporary and a permanent one should
-  be generated before going to production.
+Then state clearly:
+- Test number(s) verified in Step 8 are the only ones that can currently
+  message the bot.
+- A permanent access token should replace the temporary one before
+  production use (System User flow — separate task).
+- Webhook configuration (Meta dashboard → WhatsApp → Configuration →
+  Webhook) is NOT done yet and requires the app to be deployed to a public
+  HTTPS URL first — that's a separate follow-up step, not part of this task.
 
-## If you get stuck
+## If something unexpected appears
 
-If any step presents a screen you don't recognize, a business-verification
-requirement, a payment/billing prompt, or anything that asks for sensitive
-personal/business information (tax ID, legal address, ID documents) — STOP
-and describe exactly what you see to the user. Do not guess your way through
-identity or business-verification flows.
+If you hit a business-verification requirement, a billing/payment prompt,
+or any request for sensitive personal/business documents (tax ID, ID
+scans, legal address) that wasn't anticipated above — stop and describe
+exactly what you see. Do not guess your way through identity or
+business-verification flows.
